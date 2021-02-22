@@ -1,29 +1,54 @@
-import React, { useReducer, useContext, createContext } from "react";
-import { GET_USER, SET_USER_DEFAULT } from "./actions";
+import React, { useReducer, useContext, createContext, useEffect } from "react";
+import { GET_USER, USER_ACTION } from "./actions";
 import reducer from "./reducer";
-
-const UserProvider = createContext<ContextType | null>(null);
+type ContextType = {
+  state: UserType;
+  dispatch?: ({ type }: { type: string }) => void;
+  userAction: (props: string) => void;
+};
+const UserProvider = createContext({} as ContextType);
 
 const initialState: UserType = {
   userName: "",
   account: "",
   auth: "",
-  balance: 0,
-  type: "",
+  moneyInPlay: 0,
+  BoardType: "",
+  BoardTexture: [],
 };
+const CardData: any = {
+  flop: [
+    { id: 1, card: "Ac" },
+    { id: 2, card: "9h" },
+    { id: 3, card: "3d" },
+  ],
+  turn: [{ id: 4, card: "Js" }],
 
+  river: [{ id: 5, card: "Ad" }],
+};
 export const UserProviderContext: React.FC<React.ReactNode> = ({
   children,
 }) => {
   const [state, dispatch] = useReducer(reducer, initialState);
-  const setName = () => {
-    dispatch({ type: GET_USER, payload: "Elon Chen" });
+  const setUser = () => {
+    dispatch({
+      type: GET_USER,
+      payload: { userName: "Elon", account: "keddy406", moneyInPlay: 100 },
+    });
   };
-  const setUserDefault = () => {
-    dispatch({ type: SET_USER_DEFAULT, payload: "" });
+  const userAction = (userAction: string) => {
+    let tempCardData = CardData[userAction];
+    dispatch({
+      type: USER_ACTION,
+      payload: { userAction, tempCardData },
+    });
   };
+  useEffect(() => {
+    setUser();
+  }, []);
+
   return (
-    <UserProvider.Provider value={{ state, setName, setUserDefault }}>
+    <UserProvider.Provider value={{ state, userAction }}>
       {children}
     </UserProvider.Provider>
   );

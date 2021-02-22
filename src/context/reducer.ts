@@ -1,13 +1,33 @@
-import { GET_USER, SET_USER_DEFAULT } from "./actions";
+import { act } from "react-dom/test-utils";
+import { GET_USER, USER_ACTION } from "./actions";
+// reducer
+type Actions =
+  | {
+      type: GET_USER;
+      payload: any;
+    }
+  | { type: USER_ACTION; payload: any };
 
-const reducer = (state: UserType, action: Actions) => {
+const reducer = (state: UserType, action: Actions): {} => {
   switch (action.type) {
     case GET_USER:
-      return { ...state, userName: action.payload };
-    case SET_USER_DEFAULT:
-      return { ...state, userName: "" };
+      return {
+        ...state,
+        account: action.payload.account,
+        userName: action.payload.userName,
+        moneyInPlay: action.payload.moneyInPlay,
+      };
+    case USER_ACTION:
+      console.log(action.payload.tempCardData);
+
+      return {
+        ...state,
+        BoardType: action.payload.userAction,
+        BoardTexture: action.payload.tempCardData,
+      };
+
     default:
-      throw new Error(`Unknown action type: ${action.type}`);
+      return state;
   }
 };
 
